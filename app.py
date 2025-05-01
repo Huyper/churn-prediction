@@ -1,8 +1,25 @@
 from flask import Flask, request, jsonify
 import joblib
 import numpy as np
+import os
+import requests
 
 app = Flask(__name__)
+
+# Hàm tải file nếu chưa có
+def download_file(url, dest):
+    if not os.path.exists(dest):
+        print(f"Downloading {dest} ...")
+        r = requests.get(url)
+        with open(dest, "wb") as f:
+            f.write(r.content)
+        print(f"Downloaded {dest}")
+
+os.makedirs("models", exist_ok=True)
+
+download_file("https://github.com/Huyper/churn-prediction/releases/download/v1.0.0/churn_data_dict.pkl", "models/churn_data_dict.pkl")
+download_file("https://github.com/Huyper/churn-prediction/releases/download/v1.0.0/churn_encoder.pkl", "models/churn_encoder.pkl")
+download_file("https://github.com/Huyper/churn-prediction/releases/download/v1.0.0/churn_model.pkl", "models/churn_model.pkl")
 
 # Load model và các thành phần khác
 model = joblib.load("models/churn_model.pkl")
